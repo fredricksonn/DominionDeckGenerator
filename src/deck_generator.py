@@ -38,7 +38,7 @@ def downselect_sets( deck, override=[]):
     
     # Make sure editons are sorted properly
     # TODO
-    print(all_sets)
+    #print(all_sets)
     
     
     if not override:
@@ -81,12 +81,12 @@ def getStats (df):
 
 if __name__=='__main__':
     deck = pd.read_csv('data/dominion_cards.csv')
-    override = ['Base, 2E', 'Intrigue, 2E']#'Base, 2E', 'Intrigue, 2E', 'Seaside', 'Prosperity']
+    override =[]# ['Base, 2E', 'Intrigue, 2E']#'Base, 2E', 'Intrigue, 2E', 'Seaside', 'Prosperity']
     deck = downselect_sets( deck, override=override )
 
     #stats = getStats(deck)
     #print(stats.min)
     #print(stats.max)
-    
+
     # deck, supply = separate_supply( desk )
     deck.to_csv('temp.csv')
