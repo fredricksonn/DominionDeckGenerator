@@ -77,7 +77,24 @@ if __name__=='__main__':
     deck = downselect_sets( deck, override=override )
     # deck, supply = separate_supply( desk )
     deck.to_csv('temp.csv')
-    
-    
-    
+
+    ## Remove this VVVV
+    deck.insert(3,'CardClass','Kingdom')
+    deck.loc[deck['Name'] == 'Copper',['CardClass']] = 'Basic'
+    deck.loc[deck['Name'] == 'Silver',['CardClass']] = 'Basic'
+    deck.loc[deck['Name'] == 'Gold',['CardClass']] = 'Basic'
+    deck.loc[deck['Name'] == 'Estate',['CardClass']] = 'Basic'
+    deck.loc[deck['Name'] == 'Duchy',['CardClass']] = 'Basic'
+    deck.loc[deck['Name'] == 'Province',['CardClass']] = 'Basic'
+    deck.loc[deck['Name'] == 'Curse',['CardClass']] = 'Basic'
+    deck.loc[deck['Name'] == 'Potion',['CardClass']] = 'Basic'
+    deck.loc[deck['Name'] == 'Platinum',['CardClass']] = 'Basic'
+    deck.loc[deck['Name'] == 'Colony',['CardClass']] = 'Basic'
+    deck.loc[deck['Name'] == 'Shelters',['CardClass']] = 'Basic'
+    deck.loc[deck['Name'] == 'Ruins',['CardClass']] = 'Basic'
+    deck.to_csv('data/dominion_cards.csv')
+    print(deck.columns)
+    print(deck['CardClass'])
+    #^^^^^^^^^^^^^^^^^^^^
+
     
