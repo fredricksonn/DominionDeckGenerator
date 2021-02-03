@@ -6,6 +6,8 @@ Created on Sat Jan 30 09:26:34 2021
 """
 import pandas as pd
 import re
+from random import randint
+import collections
 
 from gui.tkinter import get_selection
 
@@ -71,9 +73,20 @@ def downselect_sets( deck, override=[]):
         downselect = deck
     return downselect
 
+Stats = collections.namedtuple('Stats',['min','max','mean'])
+
+def getStats (df):
+    S = Stats(min=df['Cost'].min(),max=df['Cost'].max(),mean=-1)
+    return S
+
 if __name__=='__main__':
     deck = pd.read_csv('data/dominion_cards.csv')
-    override = []#'Base, 2E', 'Intrigue, 2E', 'Seaside', 'Prosperity']
+    override = ['Base, 2E', 'Intrigue, 2E']#'Base, 2E', 'Intrigue, 2E', 'Seaside', 'Prosperity']
     deck = downselect_sets( deck, override=override )
+
+    #stats = getStats(deck)
+    #print(stats.min)
+    #print(stats.max)
+    
     # deck, supply = separate_supply( desk )
     deck.to_csv('temp.csv')
