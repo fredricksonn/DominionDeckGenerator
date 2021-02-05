@@ -6,7 +6,8 @@ Created on Sat Jan 30 09:26:34 2021
 """
 import pandas as pd
 import re
-from random import randint
+from scipy import random
+import math
 import collections
 
 from gui.tkinter import get_selection
@@ -75,18 +76,49 @@ def downselect_sets( deck, override=[]):
 
 Stats = collections.namedtuple('Stats',['min','max','mean'])
 
-def getStats (df):
-    S = Stats(min=df['Cost'].min(),max=df['Cost'].max(),mean=-1)
+# Given upper and lower bounds, can calculate sigma and mean
+# returns a sorted list of random ints bewteen upper and lower bounds
+def gaussDist( upper, lower, sz=10, sigma=-1, mean=-1):
+    if mean == -1:
+        mean = (upper + lower)/2
+        print("Using calculated mean : {}".format(str(mean)))
+    if sigma == -1:
+        sigma = (mean-lower)/2
+        print("Using calculated sigma: {}".format(str(sigma)))
+
+    results = random.default_rng().normal(loc=mean,scale=sigma,size=sz)
+    results = [ math.floor(x) for x in results ]
+    results = [ lower if x < lower else x for x in results ]
+    results = [ upper if x > upper else x for x in results ]
+    results.sort()
+    return results
+
+def getStats (df, field='Cost'):
+    S = Stats(min=df[field].min(),max=df[field].max(),mean=-1)
     return S
+
+def getCostDistOfKingdomCards(df):
+    kingdomCards = df[df['CardClass'] != 'Basic']
+    stats = getStats(kingdomCards,'CostValue')
+    return gaussDist(int(stats.max), int(stats.min))
+
+# lambda function to get the value of cost and create a new col for it
+def getValFromCost(row):
+    cost=row['Cost']
+    if type(cost) == int:
+        return cost
+    if '$' in cost:
+        return cost.replace('$','')
 
 if __name__=='__main__':
     deck = pd.read_csv('data/dominion_cards.csv')
-    override =[]# ['Base, 2E', 'Intrigue, 2E']#'Base, 2E', 'Intrigue, 2E', 'Seaside', 'Prosperity']
+    override = ['Base, 2E', 'Intrigue, 2E']#'Base, 2E', 'Intrigue, 2E', 'Seaside', 'Prosperity']
     deck = downselect_sets( deck, override=override )
 
-    #stats = getStats(deck)
-    #print(stats.min)
-    #print(stats.max)
+    # add CostValue column
+    deck['CostValue'] = deck.apply(lambda row: getValFromCost(row),axis=1)
 
+    Dist = getCostDistOfKingdomCards(deck)
+    print(Dist)    
     # deck, supply = separate_supply( desk )
     deck.to_csv('temp.csv')
