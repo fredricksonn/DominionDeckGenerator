@@ -4,10 +4,11 @@ Created on Fri Feb 12 11:45:36 2021
 
 @author: Robert
 """
+from __future__ import division
 import copy
 import pandas as pd
 # from math import prod
-from numpy.random import choice
+from numpy.random import choice, random
 
 def prod(iterable):
     cumulative = 1
@@ -17,7 +18,7 @@ def prod(iterable):
 
 def calc_score( cards, 
                cost_group_weights={(1,2):1, (3,):2, (4,):2, (5,):2, (6,7,8):1}, 
-               type_multipliers={'isActionSupplier':1.05,'isDrawer':1.05,'isAttack':0},
+               type_multipliers={'isActionSupplier':1.05,'isMultiDrawer':1.05,'isBuySupplier':1.05,'isAttack':0},
                ):
     cost_options = set(cards['cost_combined'])
     cost_counts  = {cost:sum(cards['cost_combined']==cost) for cost in cost_options}
@@ -42,6 +43,18 @@ def select_kingdom( cards, num_cards_in_kingdom ):
     sel_idxs = choice(cards.index, p=cards['score'], size=num_cards_in_kingdom, replace=False)
     return cards.loc[sel_idxs].sort_values(by='cost_combined')
 
+def finish_setup( kingdom ):
+    include_platCol = False
+    num_total = len(kingdom)
+    num_prosperity = sum(kingdom['deck']=='Prosperity')
+    per_prosperity = num_prosperity/num_total
+    prosperity_draw = random()
+    if num_prosperity>0:
+        if prosperity_draw <= max(0.2,per_prosperity):
+            include_platCol = True
+    print(num_prosperity, include_platCol)
+    return include_platCol
+
 decks_selected = []
 decks_selected = ['Dominion II', 'Intrigue II', 'Seaside', 'Prosperity']
 all_cards = pd.read_csv('../deck_data/decks/cards.csv')
@@ -64,5 +77,5 @@ else:
 calc_score( sel_cards )
 
 kingdom = select_kingdom( sel_cards, num_cards_in_kingdom=10 )
-
+include_platCol = finish_setup(kingdom)
 kingdom.to_csv('temp.csv')
