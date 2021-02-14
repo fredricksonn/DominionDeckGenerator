@@ -32,11 +32,11 @@ def calc_score( cards,
         weight_per_card = group_weight/group_cards
         for cost in group:
             cost_wpc[cost] = weight_per_card
-    cards['score_cost'] = cards.apply(lambda row: cost_wpc[row['cost_combined']], axis=1)
-    cards['score_mult'] = cards.apply(lambda row: prod([ type_multipliers[col] for col in type_multipliers if row[col]]), axis=1)
+    cards.loc[:,'score_cost'] = cards.apply(lambda row: cost_wpc[row['cost_combined']], axis=1)
+    cards.loc[:,'score_mult'] = cards.apply(lambda row: prod([ type_multipliers[col] for col in type_multipliers if row[col]]), axis=1)
     tempScore = cards.apply(lambda row: row['score_cost']*row['score_mult'], axis=1)
     cumulative_score = sum(tempScore)
-    cards['score'] = tempScore/cumulative_score
+    cards.loc[:,'score'] = tempScore/cumulative_score
     return
 
 def select_kingdom( cards, num_cards_in_kingdom ):
@@ -70,7 +70,7 @@ if decks_selected:
             deck_slice = all_cards['deck']==deck
         else:
             deck_slice = deck_slice | (all_cards['deck']==deck)
-    sel_cards = all_cards[deck_slice]
+    sel_cards = all_cards.loc[deck_slice]
 else:
     sel_cards = copy.deepcopy(all_cards)
 
