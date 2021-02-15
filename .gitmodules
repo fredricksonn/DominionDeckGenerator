@@ -1,0 +1,3 @@
+[submodule "deck_data"]
+	path = deck_data
+	url = git@github.com:s3000403/KingdomCreator.git
